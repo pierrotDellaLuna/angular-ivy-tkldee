@@ -1,5 +1,6 @@
+import { error } from '@angular/compiler/src/util';
 import { Component, OnInit, VERSION } from '@angular/core';
-import { of , from } from 'rxjs' ;
+import { of , from , take , tap , map } from 'rxjs' ;
 
 @Component({
   selector: 'my-app',
@@ -12,9 +13,23 @@ export class AppComponent implements OnInit {
 
 ngOnInit(){
 
-  of( 12 , 10 , 14 ).subscribe(
+  of( 12 , 10 , 14 , 5 ).pipe(
+    tap( nmb =>  console.log( 'emission tap ' , nmb)),
+    map ( nmb => nmb * 2),
+    tap( nmb =>  console.log( 'emission tap2 ' , nmb)),
+    map ( nmb => nmb -10 ),
+    map( nmb => {
+      if( nmb === 10 ){
+        throw new  Error('essai mapp error') ;
+      }
+        
+        return nmb ; 
+    }
+    )
+  )
+  .subscribe(
     nmb => console.log(nmb) ,
-    err => console.log( " this is error $ " , err ),
+    err => console.log( " this is error  " , err ),
     () => console.log(" done with the numbers")
 
   );
